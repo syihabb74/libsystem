@@ -1,0 +1,27 @@
+{
+  "name": "library-management-system",
+  "version": "1.0.0",
+  "description": "Library management system with unit testing",
+  "main": "Library.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "dev": "nodemon Library.js",
+    "test:score": "jest --verbose --passWithNoTests",
+    "test:summary": "jest --verbose --coverage --passWithNoTests"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "*.js",
+      "!*.test.js",
+      "!jest.config.js"
+    ],
+    "verbose": true
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.10"
+  }
+}
