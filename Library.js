@@ -20,7 +20,7 @@ Library.prototype.addBook = function (book) {
         }
     })
     this.books.push(book);
-    return this.books.length
+    return this.books.length;
 }
 
 Library.prototype.getLibraryStats = function () {
@@ -44,24 +44,48 @@ Library.prototype.removeBook = function (idBook) {
             }
         }
     })
-
     if (!isBookExist) {
         throw new Error (`Book not found`)
     }
-
     let bookRemoved = this.books[whereIndexBook];
-
     this.books.splice(whereIndexBook,1);
-    console.log(bookRemoved)
-
     return bookRemoved
+}
+
+Library.prototype.registerMember = function (member) {
+    if ( typeof member !== 'object' || !member ) throw new Error('Member must be an object');
+    if ( !member.id || !member.email || !member.name ) throw new Error ('Member must have id, name, and email');
+    if ( !member.email.includes('@') || !member.email.includes('example.com') ) throw new Error('Invalid email format');
+    this.members.forEach((value) => {
+        if (value.id === member.id) {
+            throw new ('Member with this ID already exists')
+        }
+    })
+    this.members.push(member)
+    return this.members.length;
+}
+
+
+Library.prototype.borrowBook = function (idMember, idBook) {
+    let isMemberExist = this.members.find(value => value.id === idMember);
+    if (!isMemberExist) throw new Error('Member not found');
+    let isBookExist = this.books.find(value => value.id === idBook);
+    if (!isBookExist) throw new Error (`Book not found`);
+    let isBookBorrowed = this.books.find((v) => v.id === idBook && !v.isBorrowed );
+    if (!isBookBorrowed) throw new Error ('Book is already borrowed');
 
 }
 
-// Library.prototype.borrowBook = function (idMember, idBook) {
 
-// }
+Library.prototype.findBook = function (keyword) {
+    
+    let isBookMatch = this.books.filter( v => v.title.toLowerCase().includes(keyword.toLowerCase())  ||
+                                              v.author.toLowerCase().includes(keyword.toLowerCase()) ||
+                                              v.isbn.toLowerCase().includes(keyword.toLowerCase()) 
+                                            )
+    return isBookMatch;
 
+}
 
 
 // id, title, author, isbn
@@ -73,15 +97,24 @@ function Book (id,title,author,isbn) {
 }
 
 
-let lib1 = new Library('Gramedia');
-let book1 = new Book('B001', 'The Sword', 'Akiraa', 'X667YT')
-let book2 = new Book('B002', 'Detective Conan', 'Masashi', 'Y789OP');
-lib1.addBook(book1);
-lib1.addBook(book2);
-lib1.removeBook('B002');
-console.log(lib1)
+// let book1 = new Book('B001', 'The Sword', 'Akiraa', 'X667YT')
+// let book2 = new Book('B002', 'Detective Conan', 'Masashi', 'Y789OP');
+// let lib1 = new Library('Gramedia');
+// // console.log(lib1)
+// // // lib1.addBook(book1);
+// // // lib1.addBook(book2);
+// // // lib1.removeBook('B002');
+// // // console.log(lib1)
 
+// // lib1.members.push(member1)
 
+// lib1.registerMember({
+//         id: "M001",
+//         name: "Test",
+//         email : 'xxxx@example.com'
+//       })
+
+// console.log(lib1.getLibraryStats())
 
 
 
