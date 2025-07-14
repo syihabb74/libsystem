@@ -31,6 +31,33 @@ Library.prototype.getLibraryStats = function () {
 }
 
 
+Library.prototype.removeBook = function (idBook) {
+    let isBookExist = false;
+    let whereIndexBook = null;
+    this.books.forEach((value,index) => {
+        if ( value.id === idBook ) {
+            if ( value.isBorrowed ) {
+                throw new Error ('Cannot remove borrowed book');
+            } else {
+                isBookExist = true;
+                whereIndexBook = index;
+            }
+        }
+    })
+
+    if (!isBookExist) {
+        throw new Error (`Book not found`)
+    }
+
+    let bookRemoved = this.books[whereIndexBook];
+
+    this.books.splice(whereIndexBook,1);
+    console.log(bookRemoved)
+
+    return bookRemoved
+
+}
+
 // Library.prototype.borrowBook = function (idMember, idBook) {
 
 // }
@@ -43,8 +70,16 @@ function Book (id,title,author,isbn) {
     this.title = title
     this.author = author
     this.isbn = isbn
-    this.isBorrowing = ''
 }
+
+
+let lib1 = new Library('Gramedia');
+let book1 = new Book('B001', 'The Sword', 'Akiraa', 'X667YT')
+let book2 = new Book('B002', 'Detective Conan', 'Masashi', 'Y789OP');
+lib1.addBook(book1);
+lib1.addBook(book2);
+lib1.removeBook('B002');
+console.log(lib1)
 
 
 
