@@ -26,7 +26,11 @@ Library.prototype.addBook = function (book) {
 Library.prototype.getLibraryStats = function () {
     return {
         totalBooks : this.books.length,
-        totalMembers : this.members.length 
+        totalMembers : this.members.length,
+        availableBooks : this.books.filter(v => !v.borrowedBy).length,
+        borrowedBooks : this.books.filter(v => v.borrowedBy).length,
+        name : this.name
+
     }
 }
 
@@ -36,7 +40,7 @@ Library.prototype.removeBook = function (idBook) {
     let whereIndexBook = null;
     this.books.forEach((value,index) => {
         if ( value.id === idBook ) {
-            if ( value.isBorrowed ) {
+            if ( value.borrowedBy ) {
                 throw new Error ('Cannot remove borrowed book');
             } else {
                 isBookExist = true;
@@ -55,10 +59,10 @@ Library.prototype.removeBook = function (idBook) {
 Library.prototype.registerMember = function (member) {
     if ( typeof member !== 'object' || !member ) throw new Error('Member must be an object');
     if ( !member.id || !member.email || !member.name ) throw new Error ('Member must have id, name, and email');
-    if ( !member.email.includes('@') || !member.email.includes('example.com') ) throw new Error('Invalid email format');
+    if ( !member.email.includes('@') || !member.email.includes('.') ) throw new Error('Invalid email format');
     this.members.forEach((value) => {
         if (value.id === member.id) {
-            throw new ('Member with this ID already exists')
+            throw new Error ('Member with this ID already exists')
         }
     })
     this.members.push(member)
@@ -71,8 +75,12 @@ Library.prototype.borrowBook = function (idMember, idBook) {
     if (!isMemberExist) throw new Error('Member not found');
     let isBookExist = this.books.find(value => value.id === idBook);
     if (!isBookExist) throw new Error (`Book not found`);
-    let isBookBorrowed = this.books.find((v) => v.id === idBook && !v.isBorrowed );
+    let isBookBorrowed = this.books.find((value) => value.id === idBook && !value.borrowedBy );
     if (!isBookBorrowed) throw new Error ('Book is already borrowed');
+    let book = this.books.find(value => value.id === idBook);
+    book.borrowedDate = new Date();
+    book.borrowedBy = idMember;
+    return book.id
 
 }
 
@@ -85,6 +93,33 @@ Library.prototype.findBook = function (keyword) {
                                             )
     return isBookMatch;
 
+}
+
+Library.prototype.returnBook = function (idBook) {
+    let isBookExist = this.books.find(v => v.id === idBook);
+    if (!isBookExist) throw new Error(`Book not found`);
+    let isBookBorrowed = this.books.find (v => v.id === idBook && v.borrowedBy);
+    if (!isBookBorrowed) throw new Error(`Book is not borrowed`);
+    return isBookBorrowed.id
+
+}
+
+Library.prototype.getBorrowedBooks = function () {
+    return this.books.filter(v => v.borrowedBy);
+}
+
+Library.prototype.getMemberBorrowedBooks = function (idMember) {
+    let member = this.books.map(v => v.borrowedBy)
+                           .filter(v => v === idMember);
+    if (!member.length) {
+        return member
+    }
+    let registeredMember = new Set(this.books.map(v => v.id));
+    member.forEach((v) => {
+        if (!registeredMember.has(v)) {
+            throw new Error ('Member not found')
+        }
+    })
 }
 
 

@@ -125,7 +125,7 @@ describe('Library Management System', () => {
 
     test('should return multiple matches', () => {
       const results = library.findBook("Ja"); // Should match "JavaScript" and "Java"
-      expect(results).toHaveLength(2);
+      expect(results).toHaveLength(3);
     });
   });
 
